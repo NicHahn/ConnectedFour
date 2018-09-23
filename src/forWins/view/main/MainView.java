@@ -1,17 +1,44 @@
 package forWins.view.main;
 
+
+
+import javafx.scene.shape.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import forWins.model.main.Model;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class MainView extends Application{
+	private static final int TITLE_SIZE = 80;
+	private static final int COLUMNs = 7;
+	private static final int ROWS = 6;
+	private Model model;
+	
+//	public MainView (){
+//		main();
+//	}
+//	
+	public void getModel(Model model) {
+		this.model = model;
+	}
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -19,54 +46,88 @@ public class MainView extends Application{
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		HBox hbox = new HBox();
+		hbox.setTranslateY(560);
+	    hbox.setPadding(new Insets(15, 12, 15, 12));
+		hbox.setMinWidth(640);
+	    hbox.setSpacing(10);
+	    hbox.setStyle("-fx-background-color: #F5F5F5;");
+	    
+	    Text text = new Text("Current Player: ");
+	    text.setFont(new Font(16));
+	    text.setTranslateY(5);
+	    
+	    Button newGame = new Button("NewGame");
+	    newGame.setPrefSize(100, 30);
+	    newGame.setTranslateX(230);
+	    newGame.setStyle("-fx-background-color: #DCDCDC;");
+
+	    Button close = new Button("Close");
+	    close.setPrefSize(100, 30);
+	    close.setTooltip(null);
+	    close.setTranslateX(250);
+	    close.setOnMouseEntered(e -> close.setStyle("-fx-background-color: #FF0000;"));
+	    close.setOnMouseExited(e -> close.setStyle("-fx-background-color: #DCDCDC;"));
+	    close.setOnMouseClicked(e -> {
+			try {
+				Platform.exit();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
+	    hbox.getChildren().addAll(text, newGame, close);
+	    
+		Shape shape = new Rectangle((COLUMNs + 1) * TITLE_SIZE, (ROWS +1) * TITLE_SIZE);
+		Circle [][] list = new Circle[6][7];			//rows columns
+		Group circleGroup = new Group();
+		for(int y = 0; y < ROWS; y++) {
+			for(int x = 0; x < COLUMNs; x++) {
+				Circle circle = new Circle(TITLE_SIZE/2, Color.WHITE);
+				circle.setCenterX(TITLE_SIZE/2);
+				circle.setCenterY(TITLE_SIZE/2);
+				circle.setTranslateX(x * (TITLE_SIZE + 5) + TITLE_SIZE/4);
+				circle.setTranslateY(y * (TITLE_SIZE + 5) + TITLE_SIZE/4);
+				circleGroup.getChildren().add(circle);
+				list [y][x] = circle;
+			}
+		}	
+		
+		shape.setFill(Color.BLUE);
 		Group root = new Group();
-		Text text = new Text(300, 300, "Hallo du ");
-		text.setFont(new Font(50));
-		
-		Line line1 = new Line(600, 200, 600, 1400);
-		line1.setStrokeWidth(12);
-		line1.setStroke(Color.GRAY);
-		
-		Line line2 = new Line(600, 1400, 2000, 1400);
-		line2.setStrokeWidth(12);
-		line2.setStroke(Color.GRAY);
-		
-		Line line3 = new Line(2000, 200, 2000, 1400);
-		line3.setStrokeWidth(12);
-		line3.setStroke(Color.GRAY);
-		
-		Line line4 = new Line(800, 200, 800, 1400);
-		Line line5 = new Line(1000, 200, 1000, 1400);
-		Line line6 = new Line(1200, 200, 1200, 1400);
-		Line line7 = new Line(1400, 200, 1400, 1400);
-		Line line8 = new Line(1600, 200, 1600, 1400);
-		Line line9 = new Line(1800, 200, 1800, 1400);
-		
-		Line line12 = new Line(600, 400, 2000, 400);
-		Line line13 = new Line(600, 600, 2000, 600);
-		Line line14 = new Line(600, 800, 2000, 800);
-		Line line15 = new Line(600, 1000, 2000, 1000);
-		Line line16 = new Line(600, 1000, 2000, 1000);
-		Line line17 = new Line(600, 1200, 2000, 1200);
-		
-		
-		ObservableList list = root.getChildren();
-		list.addAll(text,line1, line2, line4, line5, line6, line7, line8, line9, line12, line13, line3, line14, line15, line16, line17);
-		
-		
-		
-		
-		
-		
-		
-		
-		Scene scene = new Scene(root, 600, 600);
-		stage.setScene(scene);
-		stage.setTitle("ForWins");
-		stage.setFullScreen(true);
+		root.getChildren().addAll(shape,circleGroup,hbox);	
+		root.getChildren().addAll(makeColumns());
+		stage.setScene(new Scene(root, 640, 620));
 		stage.show();
-			
+		
 		
 	}
+	List <Rectangle> list = new ArrayList<>();
+	private List<Rectangle> makeColumns(){
+		
+		
+		for (int x = 0; x < COLUMNs; x++) {
+			Rectangle rect = new Rectangle(TITLE_SIZE, (ROWS + 1) * TITLE_SIZE);
+			rect.setFill(Color.TRANSPARENT);
+			rect.setTranslateX(x * (TITLE_SIZE + 5) + TITLE_SIZE/4);
+			
+			rect.setOnMouseEntered(e -> rect.setFill(Color.rgb(000, 178, 238, 0.2)));
+			rect.setOnMouseExited(e -> rect.setFill(Color.TRANSPARENT));
+			
+			final int column = x;
+			rect.setOnMouseClicked(e -> putToken(column));
+			
+			
+			list.add(rect);
+		}
+		
+		return list;
+	}
+
+	private void putToken(int column) {
+		
+		
+	}
+	
+	
 
 }

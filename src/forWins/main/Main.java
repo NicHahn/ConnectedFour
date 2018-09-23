@@ -1,0 +1,17 @@
+package forWins.main;
+
+import forWins.controll.main.Controll;
+import forWins.model.main.Model;
+import forWins.view.main.MainView;
+
+public class Main {
+	
+	
+	public static void main(String[] args) {
+		//Model model = new Model();
+		MainView view = new MainView();
+		//Controll controll = new Controll(model,view);
+
+	}
+
+}
