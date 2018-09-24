@@ -2,14 +2,14 @@ package forWins.model.main;
 
 public class Model {
 	public static final int EMPTY = 0;
-	public static final int PLAYER1 = 1;
-	public static final int PLAYER2 = 2;
+	public static final int RED = 1;
+	public static final int YELLOW = 2;
 	public static final int COLUMNS = 7;
 	public static final int ROWS = 6;
-	private static int [] [] brett = new int[ROWS][COLUMNS]; 			
+	private int [] [] brett = new int[ROWS][COLUMNS]; 			
 	// oberste Zeile des Spielfeld hat Index 0!
 	
-	private static int  currentPlayer = PLAYER1;
+	private int  currentPlayer = RED;
 	private int winner = 0;
 	
 	public Model() {
@@ -22,14 +22,16 @@ public class Model {
 
 
 //	public static void main(String[] args) {
-//		System.out.println(brett[0][3]);	
-//		brett[0][0] = PLAYER2;
-//		brett[0][1] = PLAYER2;
-//		brett[0][2] = PLAYER2;
-//		brett[0][3] = PLAYER2;
-//		brett[0][4] = PLAYER2;
-//		brett[0][5] = PLAYER2;
-//		brett[0][6] = PLAYER2;
+//		Model model = new Model();
+//		//model.brett[5][0] = RED;
+//		System.out.println(model.brett[5][0]);	
+//		//System.out.println(model.putAllowed(0));	
+//		System.out.println(model.putToken(0));	
+//		System.out.println(model.getCurrentPlayer());
+//		System.out.println(model.putToken(0));	
+//		System.out.println(model.getCurrentPlayer());
+//		System.out.println(model.brett[4][0]);	
+//		
 //		
 //	}
 	
@@ -41,11 +43,15 @@ public class Model {
 	}
 	
 	
+	public int getCurrentPlayer() {
+		return currentPlayer;
+	}
+
 	private void changePlayer() {
-		if (currentPlayer == 1) {
-			currentPlayer = PLAYER2;
+		if (currentPlayer == RED) {
+			currentPlayer = YELLOW;
 		}else {
-			currentPlayer = PLAYER1;
+			currentPlayer = RED;
 		}
 	}
 	
@@ -54,21 +60,27 @@ public class Model {
 		return (spalte < COLUMNS && brett[0][spalte] == EMPTY );
 	}
 	
-	public void putToken(int spalte) {
+	public int putToken(int spalte) {
+		int row = 5;		//Counter
 		if(putAllowed(spalte)) {
-			int row = 5;		//Counter
-			for(int i = 5; i >=0 ; i--) {
-				if(brett[i][spalte] != EMPTY) {
-					row--;
+			while(row >= 0){
+				if (brett[row][spalte] == 0) {
+					brett[row][spalte] = currentPlayer;
+					changePlayer();
+					return row;
 				}
-				
+			row--;
 			}
-			
-			brett[row][spalte] = currentPlayer;
-			changePlayer();
-		}else{System.out.println("Die spalte ist schon voll");}
+		}	
+		return -1;
+		
+		
 	}
 	
+	public int[][] getBrett() {
+		return brett;
+	}
+
 	/**
 	 * 
 	 * @return true if no tokens are left

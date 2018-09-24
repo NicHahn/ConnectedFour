@@ -30,13 +30,12 @@ public class MainView extends Application{
 	private static final int TITLE_SIZE = 80;
 	private static final int COLUMNs = 7;
 	private static final int ROWS = 6;
+	List <Rectangle> list = new ArrayList<>();
+	private Circle [][] circles = new Circle[6][7];			//rows columns
 	private Model model;
 	
-//	public MainView (){
-//		main();
-//	}
-//	
-	public void getModel(Model model) {
+
+	public void setModel(Model model) {
 		this.model = model;
 	}
 	
@@ -78,7 +77,7 @@ public class MainView extends Application{
 	    hbox.getChildren().addAll(text, newGame, close);
 	    
 		Shape shape = new Rectangle((COLUMNs + 1) * TITLE_SIZE, (ROWS +1) * TITLE_SIZE);
-		Circle [][] list = new Circle[6][7];			//rows columns
+		
 		Group circleGroup = new Group();
 		for(int y = 0; y < ROWS; y++) {
 			for(int x = 0; x < COLUMNs; x++) {
@@ -88,7 +87,7 @@ public class MainView extends Application{
 				circle.setTranslateX(x * (TITLE_SIZE + 5) + TITLE_SIZE/4);
 				circle.setTranslateY(y * (TITLE_SIZE + 5) + TITLE_SIZE/4);
 				circleGroup.getChildren().add(circle);
-				list [y][x] = circle;
+				circles [y][x] = circle;
 			}
 		}	
 		
@@ -101,7 +100,7 @@ public class MainView extends Application{
 		
 		
 	}
-	List <Rectangle> list = new ArrayList<>();
+	
 	private List<Rectangle> makeColumns(){
 		
 		
@@ -123,8 +122,16 @@ public class MainView extends Application{
 		return list;
 	}
 
-	private void putToken(int column) {
-		
+	public void putToken(int column) {
+		int row = model.putToken(column);
+		if( row >= 0){
+			if (model.getCurrentPlayer() == 1) {
+				circles[row][column].setFill(Color.RED);
+			} else {
+				circles[row][column].setFill(Color.YELLOW);
+			}
+			
+		}else{System.out.println("Spalte voll");}
 		
 	}
 	
