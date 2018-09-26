@@ -12,28 +12,11 @@ public class Model {
 	private int  currentPlayer = RED;
 	private int winner = 0;
 	
-	public Model() {
-		
-	}
+	
 	
 	public int getWinner() {
 		return winner;
 	}
-
-
-//	public static void main(String[] args) {
-//		Model model = new Model();
-//		//model.brett[5][0] = RED;
-//		System.out.println(model.brett[5][0]);	
-//		//System.out.println(model.putAllowed(0));	
-//		System.out.println(model.putToken(0));	
-//		System.out.println(model.getCurrentPlayer());
-//		System.out.println(model.putToken(0));	
-//		System.out.println(model.getCurrentPlayer());
-//		System.out.println(model.brett[4][0]);	
-//		
-//		
-//	}
 	
 	
 	
@@ -47,7 +30,7 @@ public class Model {
 		return currentPlayer;
 	}
 
-	private void changePlayer() {
+	public void changePlayer() {
 		if (currentPlayer == RED) {
 			currentPlayer = YELLOW;
 		}else {
@@ -66,7 +49,6 @@ public class Model {
 			while(row >= 0){
 				if (brett[row][spalte] == 0) {
 					brett[row][spalte] = currentPlayer;
-					changePlayer();
 					return row;
 				}
 			row--;
@@ -99,7 +81,7 @@ public class Model {
 	}
 	
 	public  boolean playerHasWon() {
-		if(CheckTokensInRow() | CheckTokensInColumn() | CheckTokensDiagonal() | CheckTokensDiagonalRevert()) {
+		if(CheckTokensInRow() || CheckTokensInColumn() || CheckTokensDiagonal() || CheckTokensDiagonalRevert()) {
 			return true;
 		}
 		
@@ -110,8 +92,8 @@ public class Model {
 		
 		for (int i = 0; i < ROWS; i++) {
 			for (int j = 0; j < COLUMNS - 3; j++) {
-				if (brett[j][i] != 0 && brett[j][i] == brett[j][i + 1] && brett[1][i + 1] == brett[j][i + 2] && brett[j][i + 2] == brett[j][i + 3]) {
-					winner = brett[j][i + 3];
+				if (brett[i][j] != 0 && brett[i][j] == brett[i][j + 1] && brett[i][j + 1] == brett[i][j + 2] && brett[i][j + 2] == brett[i][j + 3]) {
+					winner = brett[i][j + 3];
 					return true;
 				}
 				
@@ -140,10 +122,10 @@ public class Model {
 	
 	private  boolean CheckTokensDiagonal() {
 		
-		for (int i = 3; i >= 0; i--) {   //Column
+		for (int i = 0; i < 4 ; i++) {   //Column
 			for (int j = 5; j >= 3 ; j--) {	//Row
-				if (brett[j][i] != 0 && brett[j][i] == brett[j + 1][i+1] && brett[j + 1][i+1] == brett[j + 2][i+2] && brett[j + 2][i+2] == brett[j + 3][i+3]) {
-					winner = brett[j + 3][i + 3];
+				if (brett[j][i] != 0 && brett[j][i] == brett[j - 1][i+1] && brett[j - 1][i+1] == brett[j - 2][i+2] && brett[j - 2][i+2] == brett[j - 3][i+3]) {
+					winner = brett[j - 3][i + 3];
 					return true;
 				}
 			}
@@ -156,8 +138,8 @@ public class Model {
 		
 		for (int i = 6; i >= 3; i--) {   //Column
 			for (int j = 5; j >= 3 ; j--) {	//Row
-				if (brett[j][i] != 0 && brett[j][i] == brett[j + 1][i-1] && brett[j + 1][i-1] == brett[j + 2][i-2] && brett[j + 2][i-2] == brett[j + 3][i-3]) {
-					winner = brett[j + 3][i - 3];
+				if (brett[j][i] != 0 && brett[j][i] == brett[j - 1][i-1] && brett[j - 1][i-1] == brett[j - 2][i-2] && brett[j - 2][i-2] == brett[j - 3][i-3]) {
+					winner = brett[j - 3][i - 3];
 					return true;
 				}
 			}

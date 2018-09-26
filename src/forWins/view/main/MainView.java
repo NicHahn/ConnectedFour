@@ -10,10 +10,13 @@ import java.util.List;
 import forWins.model.main.Model;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.NamedArg;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -32,12 +35,13 @@ public class MainView extends Application{
 	private static final int ROWS = 6;
 	List <Rectangle> list = new ArrayList<>();
 	private Circle [][] circles = new Circle[6][7];			//rows columns
-	private Model model;
+	Model model = new Model();
+	Text text;
+	public MainView() {
+		
+	}
 	
 
-	public void setModel(Model model) {
-		this.model = model;
-	}
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -52,7 +56,7 @@ public class MainView extends Application{
 	    hbox.setSpacing(10);
 	    hbox.setStyle("-fx-background-color: #F5F5F5;");
 	    
-	    Text text = new Text("Current Player: ");
+	    text = new Text("Current Player: " + model.getCurrentPlayer());
 	    text.setFont(new Font(16));
 	    text.setTranslateY(5);
 	    
@@ -122,18 +126,43 @@ public class MainView extends Application{
 		return list;
 	}
 
-	public void putToken(int column) {
+	private void putToken(int column) {
 		int row = model.putToken(column);
-		if( row >= 0){
-			if (model.getCurrentPlayer() == 1) {
-				circles[row][column].setFill(Color.RED);
-			} else {
-				circles[row][column].setFill(Color.YELLOW);
-			}
-			
-		}else{System.out.println("Spalte voll");}
+		
+		if (model.getCurrentPlayer() == 1) {
+			circles[row][column].setFill(Color.RED);
+		} else {
+			circles[row][column].setFill(Color.YELLOW);
+		}
+		
+		model.changePlayer();
+		text.setText("Current Player: "+model.getCurrentPlayer());
+		if(model.playerHasWon()) {
+			showWinner();
+		}
+		if(model.NoTokensLeft()) {
+			showGameEnd();
+		}
 		
 	}
+	
+	private void showWinner() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Information Dialog");
+		alert.setHeaderText("The Winner is:");
+		alert.setContentText((model.getWinner() == 1) ? "Rot" : "Gelb");
+
+		alert.showAndWait();
+	}
+	
+	private void showGameEnd() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Information Dialog");
+		alert.setHeaderText("GameOver. No Winner!");
+
+		alert.showAndWait();
+	}
+	
 	
 	
 
