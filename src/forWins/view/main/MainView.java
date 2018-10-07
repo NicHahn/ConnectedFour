@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import forWins.model.main.Model;
+import javafx.animation.PathTransition;
+import javafx.animation.Transition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.NamedArg;
@@ -28,6 +31,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class MainView extends Application{
 	private static final int TITLE_SIZE = 80;
@@ -64,6 +68,13 @@ public class MainView extends Application{
 	    newGame.setPrefSize(100, 30);
 	    newGame.setTranslateX(230);
 	    newGame.setStyle("-fx-background-color: #DCDCDC;");
+	    newGame.setOnMouseClicked(e -> {
+			try {
+				newGame();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		});
 
 	    Button close = new Button("Close");
 	    close.setPrefSize(100, 30);
@@ -126,23 +137,52 @@ public class MainView extends Application{
 		return list;
 	}
 
-	private void putToken(int column) {
+	private void putToken(int column) {	
 		int row = model.putToken(column);
-		
-		if (model.getCurrentPlayer() == 1) {
-			circles[row][column].setFill(Color.RED);
+		if (row >= 0) {
+		TranslateTransition trans = new TranslateTransition((Duration.millis(400)),circles[row][column] );
+			if (model.getCurrentPlayer() == 1) {
+				
+				circles[row][column].setFill(Color.RED);
+				
+				circles[row][column].setTranslateY(-10);
+				
+				
+				trans.setToY(row * (TITLE_SIZE + 5) + TITLE_SIZE/4);
+				
+				trans.play();
+				
+			} else {
+				circles[row][column].setFill(Color.YELLOW);
+				circles[row][column].setTranslateY(5);
+				trans.setToY(row * (TITLE_SIZE + 5) + TITLE_SIZE/4);
+				
+				trans.play();
+			}
+			
+			model.changePlayer();
+			text.setText("Current Player: "+ model.getCurrentPlayer());
+			if(model.playerHasWon()) {
+				showWinner();
+			}
+			if(model.NoTokensLeft()) {
+				showGameEnd();
+			}	
 		} else {
-			circles[row][column].setFill(Color.YELLOW);
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setHeaderText("Column overloaded");
+			alert.setContentText("You can`t put any Token in this colum because it is full");
+			alert.show();
+			try {
+				alert.wait(60);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			alert.close();
 		}
+	
 		
-		model.changePlayer();
-		text.setText("Current Player: "+model.getCurrentPlayer());
-		if(model.playerHasWon()) {
-			showWinner();
-		}
-		if(model.NoTokensLeft()) {
-			showGameEnd();
-		}
 		
 	}
 	
@@ -151,16 +191,26 @@ public class MainView extends Application{
 		alert.setTitle("Information Dialog");
 		alert.setHeaderText("The Winner is:");
 		alert.setContentText((model.getWinner() == 1) ? "Rot" : "Gelb");
-
 		alert.showAndWait();
+		newGame();
 	}
 	
 	private void showGameEnd() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Information Dialog");
 		alert.setHeaderText("GameOver. No Winner!");
-
 		alert.showAndWait();
+		newGame();
+	}
+	
+	private void newGame() {
+		model.newGame();
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLUMNs; j++) {
+				circles[i][j].setFill(Color.WHITE);
+			}
+		}
+		text.setText("Current Player: "+ model.getCurrentPlayer());
 	}
 	
 	

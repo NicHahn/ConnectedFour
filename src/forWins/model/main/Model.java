@@ -26,6 +26,19 @@ public class Model {
 	}
 	
 	
+	/**
+	 * Set all start in the grid to 0
+	 */
+	public void newGame() {
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLUMNS; j++) {
+				brett[i][j] = 0;
+			}
+		}
+		currentPlayer = RED;
+	}
+	
+	
 	public int getCurrentPlayer() {
 		return currentPlayer;
 	}
@@ -38,30 +51,35 @@ public class Model {
 		}
 	}
 	
-	private boolean putAllowed(int spalte) {
+	private boolean putAllowed(int spalte) throws IndexOutOfBoundsException{
 		
 		return (spalte < COLUMNS && brett[0][spalte] == EMPTY );
 	}
 	
-	public int putToken(int spalte) {
+	/**
+	 * 
+	 * @param column The column in which the token is put 
+	 * @return the row of the column
+	 */
+	public int putToken(int column) throws IndexOutOfBoundsException{
 		int row = 5;		//Counter
-		if(putAllowed(spalte)) {
+		if(putAllowed(column)) {
 			while(row >= 0){
-				if (brett[row][spalte] == 0) {
-					brett[row][spalte] = currentPlayer;
+				if (brett[row][column] == 0) {
+					brett[row][column] = currentPlayer;
 					return row;
 				}
 			row--;
 			}
-		}	
+			
+		}
 		return -1;
+		
 		
 		
 	}
 	
-	public int[][] getBrett() {
-		return brett;
-	}
+	
 
 	/**
 	 * 
