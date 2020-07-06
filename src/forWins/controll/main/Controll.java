@@ -12,7 +12,16 @@ public class Controll {
 	public Controll(Model model, MainView view) {
 		this.model = model;
 		this.view = view;
+		//modusOneVsOne();
 	}
+	
+	public void modusOneVsOne() {
+		
+		view.makeColumns();
+		
+	}
+	
+	
 	
 	
 	

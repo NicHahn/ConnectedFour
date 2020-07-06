@@ -12,8 +12,10 @@ public class Main {
 		MainView view = new MainView();
 		view.main(args);
 		
-		//Controll controll = new Controll(model,view);
-
 	}
+	
+	
+	
+	
 
 }

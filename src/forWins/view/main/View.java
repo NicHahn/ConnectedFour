@@ -1,18 +1,10 @@
 package forWins.view.main;
 
-
-
-import javafx.scene.shape.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputDialog;
 import forWins.model.main.Model;
-import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -23,24 +15,25 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class MainView extends Application{
+public class View extends Application{
 	
 	private static final int TITLE_SIZE = 80;
 	private static final int COLUMNS = 7;
@@ -53,9 +46,11 @@ public class MainView extends Application{
 	private Text text;
 	
 	
+
 	
 	public static void main(String[] args) {
 		launch(args);
+
 	}
 	
 	
