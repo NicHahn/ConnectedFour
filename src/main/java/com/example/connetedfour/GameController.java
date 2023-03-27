@@ -160,6 +160,7 @@ public class GameController implements Initializable {
 
     }
 
+
     private void enableMenuItem(CheckMenuItem menuItem) {
         menuItem.setSelected(false);
         menuItem.setDisable(false);
