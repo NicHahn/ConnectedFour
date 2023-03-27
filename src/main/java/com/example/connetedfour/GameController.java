@@ -1,8 +1,6 @@
 package com.example.connetedfour;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -33,6 +32,10 @@ public class GameController implements Initializable {
     private CheckMenuItem checkMenuPlayer;
     @FXML
     private CheckMenuItem checkMenuComputer;
+    @FXML
+    private MenuItem menuRestart;
+    @FXML
+    private MenuItem menuQuit;
 
 
 
@@ -47,6 +50,7 @@ public class GameController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setMenuListener(Arrays.asList(checkMenuPlayer, checkMenuComputer));
+        initializeMenuItems();
 
         setOnMouseClickedHandler();
         setOnMouseEnteredHandler();
@@ -54,13 +58,13 @@ public class GameController implements Initializable {
 
     }
 
+    private void initializeMenuItems() {
+        menuQuit.setOnAction(actionEvent -> Platform.exit());
+        menuRestart.setOnAction(actionEvent -> restart());
+    }
+
     private void setOnMouseClickedHandler() {
-        gridPane.getChildren().forEach(circle -> circle.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                gameFlow(circle);
-            }
-        }));
+        gridPane.getChildren().forEach(circle -> circle.setOnMouseClicked(mouseEvent -> gameFlow(circle)));
     }
 
     private void gameFlow(Node circle) {
@@ -71,7 +75,7 @@ public class GameController implements Initializable {
         int row = board.getLastFreeRowInColumn(column);
         System.out.println("ROW " + row + " - Columnn" + column);
         putToken(column, row);
-        if(board.isGameOver()){
+        if (board.isGameOver()) {
             initiateGameOver();
             return;
         }
@@ -80,16 +84,15 @@ public class GameController implements Initializable {
             column = (int) new MiniMax(PLAYERAI, playerOne).minimax(board, 5, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, true)[0];
             System.out.println("AI Column " + column);
             putToken(column, board.getLastFreeRowInColumn(column));
-            if(board.isGameOver()){
+            if (board.isGameOver()) {
                 initiateGameOver();
                 return;
             }
             currentPlayer = playerOne;
-        }else{
+        } else {
             changePlayer();
         }
     }
-
 
 
     private void initiateGameOver() {
@@ -97,11 +100,13 @@ public class GameController implements Initializable {
         setDefaultOwnerIfNotExisting(alert, gridPane.getScene().getWindow());
         alert.setTitle("Game over");
         alert.setHeaderText(null);
-        alert.setContentText("Player " + currentPlayer.getNAME() + " has won. \nThe game will restart!");
+        if (board.isGameOver()) {
+            alert.setContentText("Player " + currentPlayer.getNAME() + " has won. \nThe game will restart!");
+        } else {
+            alert.setContentText("It's a draw. \nThe game will restart!");
+        }
         alert.setResizable(true);
-        alert.onShownProperty().addListener(e -> {
-            Platform.runLater(() -> alert.setResizable(false));
-        });
+        alert.onShownProperty().addListener(e -> Platform.runLater(() -> alert.setResizable(false)));
         alert.showAndWait();
         restart();
     }
@@ -113,22 +118,12 @@ public class GameController implements Initializable {
     }
 
     private void setOnMouseEnteredHandler() {
-        gridPane.getChildren().forEach(circle -> circle.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                ((Circle) circle).setFill(currentPlayer.getCOLOR());
-            }
-        }));
+        gridPane.getChildren().forEach(circle -> circle.setOnMouseEntered(mouseEvent -> ((Circle) circle).setFill(currentPlayer.getCOLOR())));
 
     }
 
     private void setOnMouseExitedHandler() {
-        gridPane.getChildren().forEach(circle -> circle.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                ((Circle) circle).setFill(Color.WHITE);
-            }
-        }));
+        gridPane.getChildren().forEach(circle -> circle.setOnMouseExited(mouseEvent -> ((Circle) circle).setFill(Color.WHITE)));
 
     }
 
@@ -154,15 +149,12 @@ public class GameController implements Initializable {
 
 
     private void setMenuListener(List<CheckMenuItem> menuItems) {
-        menuItems.stream()
-                .forEach(menuItem -> menuItem.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                        if (menuItem.isSelected()) {
-                            menuItem.setDisable(true);
-                            enableMenuItem(getOtherMenuItem(menuItem, menuItems));
-                            restart();
-                        }
+        menuItems
+                .forEach(menuItem -> menuItem.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+                    if (menuItem.isSelected()) {
+                        menuItem.setDisable(true);
+                        enableMenuItem(getOtherMenuItem(menuItem, menuItems));
+                        restart();
                     }
                 }));
 
@@ -184,9 +176,8 @@ public class GameController implements Initializable {
     }
 
     private GameMode getGameMode() {
-        if (checkMenuPlayer.isSelected()) {
-            return GameMode.PLAYER;
-        } else {
+        if (checkMenuPlayer.isSelected()) return GameMode.PLAYER;
+        else {
             return GameMode.COMPUTER;
         }
     }
